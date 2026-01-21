@@ -39,7 +39,7 @@ Kotlin Multiplatform (KMP) と Compose Multiplatform によるクロスプラッ
 
 ### テーマとフォント
 - `AppTheme` でライト/ダーク配色と `Noto Sans JP` を定義（Web の文字化け対策）
-- 現状のエントリポイントは `App()` を直接呼び出すため、適用時は `AppTheme { App() }` を使用
+- `App()` は内部で `AppTheme` を適用しているため、エントリポイントでは `App()` を直接呼び出す
 
 ## データ構造
 
