@@ -21,7 +21,7 @@ macOS/Linux 例。Windows は `gradlew.bat` を使用。
 iOS は `iosApp` を Xcode で開いて実行します。
 
 ## コーディングスタイルと命名（Coding Style & Naming Conventions）
-Kotlin 公式スタイル（インデント 4 スペース）。`@Composable` は PascalCase、一般関数は camelCase。パッケージは `org.example.project`、Android リソースは `snake_case`。テーマ変更は `AppTheme.kt`/`Color.kt` を更新し、各エントリで `AppTheme { App() }` を適用します。
+Kotlin 公式スタイル（インデント 4 スペース）。`@Composable` は PascalCase、一般関数は camelCase。パッケージは `org.example.project`、Android リソースは `snake_case`。テーマ変更は `AppTheme.kt`/`Color.kt` を更新し、`App()` は内部で `AppTheme` を適用しているため、各エントリポイントでは `App()` を直接呼び出します。
 
 ## テスト指針（Testing Guidelines）
 `composeApp/src/commonTest/kotlin` で `kotlin.test` を使用。命名は `*Test.kt`。例: `./gradlew :composeApp:test`（JVM）。現時点でカバレッジ要件は未定です。
