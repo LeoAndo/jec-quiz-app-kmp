@@ -8,6 +8,7 @@ Kotlin Multiplatform (KMP) と Compose Multiplatform を使用したクロスプ
 
 - Android
 - iOS
+- Web (Wasm / JS)
 - Desktop (JVM)
 
 ## 技術スタック
