@@ -1,56 +1,49 @@
 # クイズアプリ仕様書
 
 ## 概要
-
-Kotlin Multiplatform (KMP) と Compose Multiplatform を使用したクロスプラットフォーム対応のクイズアプリケーション。
+Kotlin Multiplatform (KMP) と Compose Multiplatform によるクロスプラットフォームのクイズアプリ。
 
 ## 対応プラットフォーム
-
 - Android
 - iOS
 - Web (Wasm / JS)
 - Desktop (JVM)
 
 ## 技術スタック
-
 - **言語**: Kotlin
-- **UI フレームワーク**: Compose Multiplatform
-- **アーキテクチャ**: Kotlin Multiplatform (KMP)
-- **UI コンポーネント**: Material 3
+- **UI**: Compose Multiplatform + Material 3
+- **テーマ/フォント**: `AppTheme.kt`/`Color.kt`、`composeResources/font/notosansjp_regular.ttf`
 
 ## 機能仕様
 
-### クイズ機能
-
+### クイズ進行
 1. **問題表示**
-   - 問題文を画面中央のカード形式で表示
-   - HorizontalPager によるページング形式で問題を切り替え
-   - ユーザーによる手動スワイプは無効化（回答選択時のみ遷移）
-
+   - 画面中央のカードで問題文を表示
+   - `HorizontalPager` でページング、ユーザーのスワイプは無効
 2. **回答選択**
-   - 各問題に対して複数の選択肢をボタンで表示
-   - 選択肢は縦方向に配置
-   - ボタン幅は最大320dp、画面幅の50%に制限
-
+   - 選択肢を縦並びのボタンで表示
+   - 回答時に次の問題へ遷移
 3. **正誤判定**
-   - 回答選択時に Snackbar で「正解です」または「不正解です」を表示
+   - 回答選択時に Snackbar で「正解です/不正解です」を表示
    - 正解数をカウント
-
 4. **結果表示**
-   - 全問回答後に正解数を表示（例：「2問正解しました」）
-   - 「やり直す」ボタンで最初の問題に戻り、スコアをリセット
+   - 全問回答後に正解数を表示（例: 「2問正解しました」）
+   - 「やり直す」で1問目へ戻り、スコアをリセット
+   - 結果表示中は回答ボタンを無効化
 
-### UI 仕様
+### UI/レイアウト
+- **レイアウト**: `Scaffold` ベース、縦スクロール（`verticalScroll`）
+- **間隔**: コンテンツ間は 12dp
+- **問題カード**: `fillMaxWidth(0.5f)` + `aspectRatio(1f)`、背景は `MaterialTheme.colorScheme.secondaryContainer`
+- **回答ボタン**: `widthIn(max = 320.dp)` かつ `fillMaxWidth(0.5f)`、テキストは太字
 
-- **レイアウト**: Scaffold ベースのレイアウト
-- **スクロール**: 縦方向スクロール対応
-- **間隔**: コンテンツ間は12dpの間隔
-- **問題カード**: アスペクト比1:1の正方形、secondaryContainer カラー
+### テーマとフォント
+- `AppTheme` でライト/ダーク配色と `Noto Sans JP` を定義（Web の文字化け対策）
+- `App()` は内部で `AppTheme` を適用しているため、エントリポイントでは `App()` を直接呼び出す
 
 ## データ構造
 
 ### Question enum
-
 ```kotlin
 enum class Question(
     val message: String,      // 問題文
@@ -60,23 +53,21 @@ enum class Question(
 ```
 
 ### サンプル問題
-
 | ID | 問題文 | 選択肢 | 正解 |
 |----|--------|--------|------|
 | Q1 | Androidの開発言語は？ | Java, PHP, Ruby, Go, Swift | Java (index: 0) |
 | Q2 | iOSの開発言語は？ | PHP, Swift, Ruby | Swift (index: 1) |
 
 ## 状態管理
-
 | 状態 | 型 | 説明 |
 |------|-----|------|
 | hostState | SnackbarHostState | Snackbar の表示管理 |
-| pagerState | PagerState | 現在のページ位置 |
+| pagerState | PagerState | 現在のページ位置（`Question.entries.size` でページ数） |
+| scrollState | ScrollState | 画面の縦スクロール |
 | isFinishedQuiz | Boolean | クイズ完了フラグ |
 | collectAnswerCount | Int | 正解数のカウンター |
 
 ## 今後の拡張案
-
 - [ ] 問題データの外部ファイル化 (JSON/CSV)
 - [ ] カテゴリ別問題選択機能
 - [ ] タイマー機能

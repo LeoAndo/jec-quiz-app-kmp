@@ -44,7 +44,7 @@ fun App() {
     var isFinishedQuiz by remember { mutableStateOf(false) }
     var collectAnswerCount by remember { mutableStateOf(0) }
 
-    MaterialTheme {
+    AppTheme {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             snackbarHost = { SnackbarHost(hostState = hostState) }
