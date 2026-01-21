@@ -1,46 +1,32 @@
 # Repository Guidelines
 
-このドキュメントはこのリポジトリの参加者向けガイドです。Java ベースのカウンターアプリを迅速に理解し、作業を進めるための構成と基本ルールをまとめます。
+## プロジェクト概要
+Kotlin Multiplatform と Compose Multiplatform を使い、Android/iOS/Web/Desktop を対象としたクイズアプリです。共有 UI とロジックは `composeApp` に集約し、iOS のエントリは `iosApp` にあります。
 
-## プロジェクト構成とモジュール
-- ルートは Gradle Kotlin DSL 構成で、`settings.gradle.kts` と `build.gradle.kts` が入口。
-- アプリ本体は単一モジュール `app/`。Java ソースは `app/src/main/java/jp/ac/jec/cm0199/jecandroidjavatemplate/`。
-- 画面は `MainActivity` のみで、カウンターの増減/リセットを実装。
-- リソースは `app/src/main/res/`、マニフェストは `app/src/main/AndroidManifest.xml`。
-- 共有設定は `gradle/` と `gradle/libs.versions.toml` で管理。
+## プロジェクト構成（Project Structure & Module Organization）
+- 共有コード: `composeApp/src/commonMain/kotlin`、共有テスト: `composeApp/src/commonTest/kotlin`
+- 端末別コード: `androidMain`, `iosMain`, `jvmMain`, `jsMain`, `wasmJsMain`, `webMain`
+- アセット: `composeApp/src/androidMain/res`, `composeApp/src/commonMain/composeResources`, `composeApp/src/webMain/resources`, `iosApp/iosApp/Assets.xcassets`
+- iOS エントリ/設定: `iosApp/iosApp`, `iosApp/iosApp.xcodeproj`, `iosApp/Configuration/Config.xcconfig`
 
-## ビルド・テスト・開発コマンド
-- `./gradlew assembleDebug` : デバッグ APK を生成。
-- `./gradlew assembleRelease` : リリース APK を生成（minify は無効）。
-- `./gradlew installDebug` : 接続端末にインストール。
-- `./gradlew test` : JVM ユニットテスト（JUnit4）。
-- `./gradlew connectedAndroidTest` : 実機/エミュレータ向け計測テスト。
-- `./gradlew lint` : Android Lint を実行。
+## ビルド・実行・開発コマンド（Build, Test, and Development Commands）
+代表的な Gradle コマンド（macOS/Linux）は以下です。Windows は `gradlew.bat` を使います。
+```shell
+./gradlew :composeApp:assembleDebug
+./gradlew :composeApp:run
+./gradlew :composeApp:wasmJsBrowserDevelopmentRun
+./gradlew :composeApp:jsBrowserDevelopmentRun
+```
+iOS は `iosApp` を Xcode で開いて実行します。
 
-## コーディング規約と命名
-- Java 11 を前提。インデントは 4 スペース、タブ禁止。
-- クラスは PascalCase、メソッド/変数は lowerCamelCase。
-- リソース名は lower_snake_case。例: `activity_main.xml`, `@+id/btn_increment`。
-- 画面実装は View System を採用する。
-- レイアウトは LinearLayout を基本とし、ConstraintLayout は避ける。
-- ロジックも含めて処理は Activity にまとめる。
-- EdgeToEdge を有効にし、システムバーのインセットを処理する。
-- UI はダーク配色固定（ライト/ダーク切り替えなし）。
+## コーディングスタイルと命名（Coding Style & Naming Conventions）
+Kotlin の公式スタイルに準拠し、インデントは 4 スペース。Compose の `@Composable` 関数は `AppScreen` のように PascalCase、一般関数は camelCase。パッケージは `org.example.project` 形式。Android リソースは `ic_launcher_background.xml` のように snake_case。
 
-## テスト方針
-- 単体テストは `app/src/test/java/`、計測テストは `app/src/androidTest/java/`。
-- 新規修正には再現テストを追加し、`*Test.java` 命名を維持。
-- UI 変更は Espresso の追加を検討。
+## テスト指針（Testing Guidelines）
+共有テストは `composeApp/src/commonTest/kotlin`、`kotlin.test` を使用。基本は `*Test.kt` 命名。例: `./gradlew :composeApp:test`（JVM）。現時点でカバレッジ基準は未定です。
 
-## コミット & PR
-- `.git` が無いため既存ルールを確認できない。短い命令形 + 変更内容（例: "Add settings screen"）を推奨。
-- PR には目的、変更点、実行したコマンドを記載。UI 変更はスクリーンショットを添付。
+## コミット・PR 指針（Commit & Pull Request Guidelines）
+履歴は `first commit` のみで明確な規約なし。短く意味が伝わる命令形を推奨（例: `Add quiz flow`）。PR には概要、影響プラットフォーム、手動確認結果、UI 変更時のスクリーンショットを含め、仕様変更があれば `SPEC.md` を更新してください。
 
-## 設定・環境
-- `local.properties` は SDK パス用。個人環境の値は共有しない。
-- 依存バージョン変更は影響範囲を記録し、`gradle/libs.versions.toml` を更新。
-
-## ドキュメント
-- `README.md` : プロジェクト概要とセットアップ手順。
-- `SPEC.md` : アプリ仕様書。画面一覧と技術仕様を記載。
-- `TUTORIAL.md` : 授業用テキスト。Android アプリ開発入門の解説と演習問題。
+## 設定・秘密情報（Configuration Tips）
+依存関係は `gradle/libs.versions.toml`、Android 設定は `gradle.properties` と `composeApp/build.gradle.kts`、iOS 設定は `iosApp/Configuration/Config.xcconfig` にあります。秘密情報はコミットせず、ローカル上書きで管理します。
